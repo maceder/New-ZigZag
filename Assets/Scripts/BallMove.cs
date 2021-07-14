@@ -1,32 +1,28 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
 public class BallMove : MonoBehaviour
 {
-    Vector3 dir;
+    Vector3 _dir;
     public float speed;
     public float addSpeed;
     public GroundSpawner grSpawner;
     public static bool isFall;
-
-    private float timer;
+    private float _timer;
     void Start()
     {
-        dir = Vector3.zero;
+        _dir = Vector3.zero;
         isFall = false;
-        timer = 0;
+        _timer = 0;
     }
-
     void Update()
     {
         // Oyuncu düşerse isFall true
         if(transform.position.y <= 0.5f)
         {
             isFall = true;
-            timer += Time.deltaTime;
-            if(timer > 3)
+            _timer += Time.deltaTime;
+            if(_timer > 3)
             {
                 //Düştükten sonra 3 saniye geçip oyunu tekrar başlatıcak
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
@@ -40,32 +36,37 @@ public class BallMove : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             //Sağa gidiyor ise sola 
-            if (dir.x == 0)
+            if (_dir.x == 0)
             {
-                dir = Vector3.left;
+                _dir = Vector3.left;
             }
             //Sola gidiyor ise sağa
             else
             {
-                dir = Vector3.forward;
+                _dir = Vector3.forward;
             }
             //Oyuncu her yön değiştirdiğinde hızını artırıyor
-            speed += addSpeed * Time.deltaTime;
+            speed += addSpeed;
         }
         //Haraket işlemi
-        Vector3 move = dir * Time.deltaTime * speed;
+        Vector3 move = _dir * (Time.deltaTime * speed);
         transform.position += move;
     }
 
     public void OnCollisionExit(Collision collision)
     {
-        if(collision.gameObject.tag == "Ground")
+        if(collision.gameObject.CompareTag("Ground"))
         {
             Score.score++;
             //Her küp'ten ayrılınca küp düşüyor yeni küp ekleniyor sonuna ve düşen küp yokoluyor
             grSpawner.Spawner();
-            collision.gameObject.AddComponent<Rigidbody>();
-            Destroy(collision.gameObject, 3f);
+            StartCoroutine(Timer(collision.gameObject));
         }
+    }
+
+    IEnumerator Timer(GameObject poolobject)
+    {
+        yield return new WaitForSeconds(3f/speed);
+        ObjectPool.Instance.SetPooledObject(poolobject.transform.parent.gameObject,0);
     }
 }
