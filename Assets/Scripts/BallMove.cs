@@ -3,17 +3,19 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 public class BallMove : MonoBehaviour
 {
-    Vector3 _dir;
+    
     public float speed;
     public float addSpeed;
     public GroundSpawner grSpawner;
     public static bool isFall;
-    private float _timer;
+
+    private float timer;
+    Vector3 dir;
     void Start()
     {
-        _dir = Vector3.zero;
+        dir = Vector3.zero;
         isFall = false;
-        _timer = 0;
+        timer = 0;
     }
     void Update()
     {
@@ -21,8 +23,8 @@ public class BallMove : MonoBehaviour
         if(transform.position.y <= 0.5f)
         {
             isFall = true;
-            _timer += Time.deltaTime;
-            if(_timer > 3)
+            timer += Time.deltaTime;
+            if(timer > 3)
             {
                 //Düştükten sonra 3 saniye geçip oyunu tekrar başlatıcak
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
@@ -36,20 +38,20 @@ public class BallMove : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             //Sağa gidiyor ise sola 
-            if (_dir.x == 0)
+            if (dir.x == 0)
             {
-                _dir = Vector3.left;
+                dir = Vector3.left;
             }
             //Sola gidiyor ise sağa
             else
             {
-                _dir = Vector3.forward;
+                dir = Vector3.forward;
             }
             //Oyuncu her yön değiştirdiğinde hızını artırıyor
             speed += addSpeed;
         }
         //Haraket işlemi
-        Vector3 move = _dir * (Time.deltaTime * speed);
+        Vector3 move = dir * (Time.deltaTime * speed);
         transform.position += move;
     }
 

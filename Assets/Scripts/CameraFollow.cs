@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
-    public Transform Player;
+    public Transform player;
     Vector3 distance;
 
     void Start()
     {
-        distance = transform.position - Player.position;
+        distance = transform.position - player.position;
     }
 
     void Update()
@@ -17,7 +17,7 @@ public class CameraFollow : MonoBehaviour
         //Oyuncu düştüyse takibi bırak
         if(BallMove.isFall == false)
         {
-            transform.position = Player.position + distance;
+            transform.position = player.position + distance;
         }
     }
 }
